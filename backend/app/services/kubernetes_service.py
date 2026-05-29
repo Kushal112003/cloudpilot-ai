@@ -1,4 +1,4 @@
-class PrometheusServiceCheck:
+class KubernetesServiceCheck:
     def check(self) -> bool:
         try:
             return True  # Simulate a successful health check
