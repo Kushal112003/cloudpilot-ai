@@ -20,5 +20,11 @@ pipeline {
                 sh 'docker images | grep cloudpilot-backend'
             }
         }
+
+        stage('Security Scan') {
+            steps {
+                sh 'trivy image --exit-code 1 --severity CRITICAL cloudpilot-backend:latest'
+            }
+        }
     }
 }
