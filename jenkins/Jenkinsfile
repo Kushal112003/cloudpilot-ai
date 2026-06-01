@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Build Backend') {
+            steps {
+                script {
+                    load 'jenkins/vars/buildBackend.groovy'
+                    buildBackend()
+                }
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                script {
+                    load 'jenkins/vars/runTrivy.groovy'
+                    runTrivy()
+                }
+            }
+        }
+
+        stage('Deploy Backend') {
+            steps {
+                script {
+                    load 'jenkins/vars/deployBackend.groovy'
+                    deployBackend()
+                }
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                script {
+                    load 'jenkins/vars/healthCheckBackend.groovy'
+                    healthCheckBackend()
+                }
+            }
+        }
+    }
+}
