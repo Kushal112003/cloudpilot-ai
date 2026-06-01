@@ -6,8 +6,7 @@ pipeline {
         stage('Build Backend') {
             steps {
                 script {
-                    load 'jenkins/vars/buildBackend.groovy'
-                    buildBackend()
+                    load 'jenkins/pipeline/buildBackend.groovy'
                 }
             }
         }
@@ -15,8 +14,7 @@ pipeline {
         stage('Security Scan') {
             steps {
                 script {
-                    load 'jenkins/vars/runTrivy.groovy'
-                    runTrivy()
+                    load 'jenkins/pipeline/runTrivy.groovy'
                 }
             }
         }
@@ -24,8 +22,7 @@ pipeline {
         stage('Deploy Backend') {
             steps {
                 script {
-                    load 'jenkins/vars/deployBackend.groovy'
-                    deployBackend()
+                    load 'jenkins/pipeline/deployBackend.groovy'
                 }
             }
         }
@@ -33,8 +30,7 @@ pipeline {
         stage('Health Check') {
             steps {
                 script {
-                    load 'jenkins/vars/healthCheckBackend.groovy'
-                    healthCheckBackend()
+                    load 'jenkins/pipeline/healthCheckBackend.groovy'
                 }
             }
         }
