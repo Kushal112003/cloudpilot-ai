@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudpilot-backend
+  namespace: cloudpilot
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: cloudpilot-backend
+
+  template:
+    metadata:
+      labels:
+        app: cloudpilot-backend
+
+    spec:
+      containers:
+      - name: cloudpilot-backend
+
+        image: cloudpilot-backend:latest
+
+        imagePullPolicy: Never
+
+        ports:
+        - containerPort: 8000

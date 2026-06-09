@@ -1,6 +1,10 @@
-echo "Running Health Check..."
+echo "Running Kubernetes Health Check..."
 
 sh '''
-sleep 10
-curl -f http://localhost:8000/health
-'''
+export KUBECONFIG=/var/lib/jenkins/.kube/config
+
+kubectl rollout status deployment/cloudpilot-backend \ -n cloudpilot --timeout=120s
+
+kubectl get pods -n cloudpilot
+
+kubectl get svc -n cloudpilot

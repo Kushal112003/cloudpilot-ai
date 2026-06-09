@@ -1,11 +1,22 @@
-echo "Deploying Backend..."
+echo "Deploying Backend to Kubernetes..."
 
 sh '''
-docker stop cloudpilot-backend || true
-docker rm cloudpilot-backend || true
+echo "Importing image into K3s"
 
-docker run -d \
---name cloudpilot-backend \
--p 8000:8000 \
-cloudpilot-backend:latest
-'''
+docker save cloudpilot-backend:latest -o cloudpilot-backend.tar
+
+sudo k3s ctr images import cloudpilot-backend.tar
+
+echo "Applying Kubernetes manifests..."
+
+kubectl apply -f kubernetes/namespace.yaml
+
+kubectl apply -f kubernetes/backend-deployment.yaml
+
+kubectl apply -f kubernetes/backend-service.yaml
+
+echo "Waiting for rollout..."
+
+kubectl rollout status deployment/cloudpilot-backend \ -n cloudpilot --timeout=120s
+
+''' 
