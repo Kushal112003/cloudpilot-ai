@@ -78,7 +78,7 @@ from app.services.loki_service import LokiServiceCheck
 from app.services.prometheus_service import PrometheusServiceCheck
 from app.services.security_service import SecurityServiceCheck
 from app.services.telemetry_service import TelemetryServiceCheck 
-
+from app.utils.logger import logger
 
 logging.basicConfig(
     level=logging.INFO,
@@ -101,48 +101,48 @@ def check_health():
 
     # Execute individual service health checks
     try:
-        ai_status = AIServiceCheck().check()
+        ai_result = AIServiceCheck().check()
     except Exception:
         logging.error("AI service health check failed", exc_info=True)
         ai_status = False
 
     try:
-        grafana_status = GrafanaServiceCheck().check()
+        grafana_result = GrafanaServiceCheck().check()
     except Exception:
         logging.error("Grafana service health check failed", exc_info=True)
         grafana_status = False
 
     try:
-        jenkins_status = JenkinsServiceCheck().check()
+        jenkins_result = JenkinsServiceCheck().check()
     except Exception:
         logging.error("Jenkins service health check failed", exc_info=True) 
         jenkins_status = False
 
     try:
-        kubernetes_status = KubernetesServiceCheck().check()
+        kubernetes_result = KubernetesServiceCheck().check()
     except Exception:
         logging.error("Kubernetes service health check failed", exc_info=True)
         kubernetes_status = False
 
     try:
-        loki_status = LokiServiceCheck().check()
+        loki_result = LokiServiceCheck().check()
     except Exception:
         logging.error("Loki service health check failed", exc_info=True)
-        loki_status = False
+        loki_result = False
 
     try:
-        prometheus_status = PrometheusServiceCheck().check()
+        prometheus_result = PrometheusServiceCheck().check()
     except Exception:
         logging.error("Prometheus service health check failed", exc_info=True)
-        prometheus_status = False
+        prometheus_result = False
 
     try:
-        security_status = SecurityServiceCheck().check()
+        security_result = SecurityServiceCheck().check()
     except Exception:
         logging.error("Security service health check failed", exc_info=True)
         security_status = False
     try:        
-        telemetry_status = TelemetryServiceCheck().check()
+        telemetry_result = TelemetryServiceCheck().check()
     except Exception:
         logging.error("Telemetry service health check failed", exc_info=True)
         telemetry_status = False
@@ -151,14 +151,14 @@ def check_health():
     # If ANY service is unhealthy,
     # overall platform health becomes False
     overall_health = all([
-        ai_status,
-        grafana_status, 
-        jenkins_status,
-        kubernetes_status,
-        loki_status,
-        prometheus_status,
-        security_status,
-        telemetry_status
+        ai_result["healthy"],
+        grafana_result["healthy"], 
+        jenkins_result["healthy"],
+        kubernetes_result["healthy"],
+        loki_result["healthy"],
+        prometheus_result["healthy"],
+        security_result["healthy"],
+        telemetry_result["healthy"]
     ])
 
     # Final aggregated response
@@ -170,79 +170,28 @@ def check_health():
 
         "services": {
 
-            "ai_service": {
-                "healthy": ai_status,
-                "message": (
-                    "AI service is working"
-                    if ai_status
-                    else "AI service is down"
-                )
-            },
+            "ai_service": ai_result,
 
-             "grafana_service": {
-                "healthy": grafana_status,
-                "message": (
-                    "Grafana service is working"
-                    if grafana_status
-                    else "Grafana service is down"
-                )
-            },
+             "grafana_service": grafana_result,
 
-            "jenkins_service": {
-                "healthy": jenkins_status,
-                "message": (
-                    "Jenkins service is working"
-                    if jenkins_status
-                    else "Jenkins service is down"
-                )
-            },
+            "jenkins_service": jenkins_result,
 
-            "kubernetes_service": {
-                "healthy": kubernetes_status,
-                "message": (
-                    "Kubernetes service is working"
-                    if kubernetes_status
-                    else "Kubernetes service is down"
-                )
-            },
+            "kubernetes_service": kubernetes_result,
 
-            "loki_service": {
-                "healthy": loki_status,
-                "message": (
-                    "Loki service is working"
-                    if loki_status
-                    else "Loki service is down"
-                )
-            },
+            "loki_service": loki_result,
 
-            "prometheus_service": {
-                "healthy": prometheus_status,
-                "message": (
-                    "Prometheus service is working"
-                    if prometheus_status
-                    else "Prometheus service is down"
-                )
-            },
+            "prometheus_service": prometheus_result,
 
-             "security_service": {
-                "healthy": security_status,
-                "message": (
-                    "Security service is working"
-                    if security_status
-                    else "Security service is down"
-                )
-            },
+            "security_service": security_result,
 
-            "telemetry_service": {
-                "healthy": telemetry_status,
-                "message": (
-                    "Telemetry service is working"
-                    if telemetry_status
-                    else "Telemetry service is down"
-                )
-            }
-        }
+            "telemetry_service": telemetry_result
+
+        
     }
+}
+    logger.info(
+        f"Health Check Executed | overall_health={overall_health}"
+    )
 
     return health_response
 

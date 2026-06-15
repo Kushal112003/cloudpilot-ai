@@ -17,6 +17,9 @@ spec:
         app: cloudpilot-backend
 
     spec:
+
+      serviceAccountName: cloudpilot-sa
+      
       containers:
       - name: cloudpilot-backend
 

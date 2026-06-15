@@ -1,7 +1,11 @@
 class TelemetryServiceCheck:
-    def check(self) -> bool:
-        try:
-            return True  # Simulate a successful health check
-                    # Future requests call
-        except Exception:
-            return False
+
+    def check(self):
+#dummy not implementing real stats
+        return{
+            "healthy": True,
+            "response_time_ms": 0,
+            "message": "Telemetry service working",
+            "details": {}
+
+        }
